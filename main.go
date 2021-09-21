@@ -1,4 +1,4 @@
-package main
+package test3
 
 import (
     "embed"
@@ -10,6 +10,3 @@ var Dist embed.FS
 
 
 
-func main() {
-    fmt.Println(123)
-}
