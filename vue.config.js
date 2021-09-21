@@ -1,3 +1,4 @@
 module.exports = {
-  publicPath: '/dist/dist'
+  publicPath: '/dist/dist',
+  indexPath: 'default.html'
 }
