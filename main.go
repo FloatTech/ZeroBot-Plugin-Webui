@@ -6,7 +6,7 @@ import (
 )
 
 //go:embed dist
-var static embed.FS
+var Dist embed.FS
 
 
 
