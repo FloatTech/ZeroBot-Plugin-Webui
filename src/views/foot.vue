@@ -35,12 +35,12 @@
       </el-col>
       <el-col :span="7">
         <div>
-          <el-input/>
+          <el-input v-model="msg"/>
         </div>
       </el-col>
       <el-col :span="2">
         <div>
-          <el-button type="success">发送</el-button>
+          <el-button @click="send_msg" type="success">发送</el-button>
         </div>
       </el-col>
     </el-row>
@@ -70,7 +70,8 @@ export default {
       selfIdOptions: [],
       selfId: '',
       msgType: "group",
-      id:0
+      id:0,
+      msg:''
     }
   },
   created() {
@@ -78,7 +79,7 @@ export default {
       this.selfIdOptions.push(...resp.data)
       if (resp.data.length>0){this.selfId = resp.data[0]}
     }).catch((err)=>{
-      alert("请求api错误"+err)
+      console.log("请求api错误"+err)
     })
     this.data_changed()
   },
@@ -105,6 +106,23 @@ export default {
           this.id = resp.data[0].user_id
         })
       }
+    },
+    send_msg:function () {
+      console.log(this.selfId)
+      console.log(this.msgType)
+        if (this.id===0 || this.msg === ""){
+          return
+        }
+       let  data = {"self_id":this.selfId,"message_type":this.msgType,"id":this.id,"message":this.msg}
+       console.log(data)
+        axios.post(Api.baseAPi+Api.SendMsg.index,data).
+        then((resp)=>{
+          if (resp.status === 200){
+            console.log("发送成功")
+          }
+        }).catch((err)=>{
+          console.log(err)
+        })
     }
   }
 

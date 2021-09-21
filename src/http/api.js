@@ -1,9 +1,9 @@
 export default {
     baseAPi : "http://127.0.0.1:3000",
     wsUrl: "ws://127.0.0.1:3000",
-    // 首页
+    // 获取qq数组
     Config: {
-        index: '/get_config'
+        index: '/get_bots'
     },
 
     // 好友列表
@@ -22,7 +22,16 @@ export default {
     AllConfig:{
         index: "/get_all_config"
     },
+    // 获取插件列表
     GetHandles:{
         index:"/get_plugins"
+    },
+    GetLabel:{
+        index:"/get_label"
+    },
+    // 发送信息
+    SendMsg:{
+        index:"/send_msg"
     }
+
 }

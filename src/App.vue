@@ -5,7 +5,7 @@
         style="height: 6%"
         class="label_style bor"
       >
-        leafBot
+        {{label}}
       </div>
       <el-menu
           router="router"
@@ -66,11 +66,13 @@
 <script>
 
 import Foot from "@/views/foot";
+import axios from "axios";
 
   export default {
     components: {Foot},
     data(){
         return {
+          label:"leafBot",
           container_style :{
             margin: "0 auto",
             height : "100%",
@@ -93,6 +95,12 @@ import Foot from "@/views/foot";
       },
     created() {
         window.msgs = []
+      axios.get("/get_label").then((resp)=>{
+        this.label = resp.data
+      }).catch((err)=>{
+        console.log("获取标签失败"+err)
+      })
+
     }
   }
 
