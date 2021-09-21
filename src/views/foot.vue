@@ -77,11 +77,20 @@ export default {
   created() {
     Http.post(Api.baseAPi + Api.Config.index).then((resp) => {
       this.selfIdOptions.push(...resp.data)
-      if (resp.data.length>0){this.selfId = resp.data[0]}
+      if (resp.data.length>0){
+        this.selfId = resp.data[0]
+        axios.post(Api.baseAPi+Api.GroupList.index,{self_id:this.selfId},{}).then((resp)=>{
+          for (let data of resp.data) {
+            console.log(data);
+            this.list.push({"id":data.group_id,"name":data.group_name,"nick_name":data.group_name})
+          }
+          this.id = resp.data[0].group_id
+        })
+      }
     }).catch((err)=>{
       console.log("请求api错误"+err)
     })
-    this.data_changed()
+
   },
   methods:{
     data_changed: function () {
@@ -108,13 +117,10 @@ export default {
       }
     },
     send_msg:function () {
-      console.log(this.selfId)
-      console.log(this.msgType)
         if (this.id===0 || this.msg === ""){
           return
         }
        let  data = {"self_id":this.selfId,"message_type":this.msgType,"id":this.id,"message":this.msg}
-       console.log(data)
         axios.post(Api.baseAPi+Api.SendMsg.index,data).
         then((resp)=>{
           if (resp.status === 200){

@@ -47,7 +47,7 @@
             配置管理
           </el-menu-item>
           <el-menu-item index="suggest">
-            <el-link type="info" href="https://github.com/huoxue1/leafBotPlugin/issues">意见反馈</el-link>
+            <el-link type="info" v-bind:href="link">意见反馈</el-link>
           </el-menu-item>
         </el-menu>
       </el-header>
@@ -67,8 +67,10 @@
 
 import Foot from "@/views/foot";
 import axios from "axios";
+import Api from "@/http/api";
 
   export default {
+
     components: {Foot},
     data(){
         return {
@@ -87,6 +89,7 @@ import axios from "axios";
             padding: 0,
             width: "12%"
           },
+          link:""
 
         }
       },
@@ -95,9 +98,15 @@ import axios from "axios";
       },
     created() {
         window.msgs = []
-      axios.get("/get_label").then((resp)=>{
+      axios.get(Api.baseAPi+Api.GetLabel.index).then((resp)=>{
         this.label = resp.data
+        if (resp.data === "ZeroBot-Plugin"){
+          this.link = "https://github.com/FloatTech/ZeroBot-Plugin/issues"
+        }else {
+          this.link = "https://github.com/huoxue1/leafBot/issues"
+        }
       }).catch((err)=>{
+
         console.log("获取标签失败"+err)
       })
 
@@ -131,7 +140,7 @@ body {
 }
 
 .label_style {
-  font-size: xx-large;
+  font-size: large;
   font-family: "Microsoft YaHei UI Light",serif;
   font-weight: bold;
   color: #42b983;

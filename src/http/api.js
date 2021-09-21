@@ -32,6 +32,10 @@ export default {
     // 发送信息
     SendMsg:{
         index:"/send_msg"
+    },
+    // 改变插件状态
+    ChangePluginStatus:{
+
     }
 
 }

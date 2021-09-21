@@ -6,7 +6,7 @@
     <el-table-column label="插件类型" prop="HandleType"> </el-table-column>
     <el-table-column label="是否启用">
       <template #default="scope">
-        <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+        <el-switch disabled v-model="scope.row.Enable" @change="plugin_status(scope.row.Name,scope.row.Enable)" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
       </template>
     </el-table-column>
 
@@ -34,8 +34,8 @@ export default {
     })
   },
   methods:{
-    handEvent:function (id, enable) {
-      console.log(id,enable)
+    plugin_status:function (name,status) {
+        console.log(name,status)
     }
   }
 }
