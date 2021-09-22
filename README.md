@@ -1,6 +1,6 @@
 ## 该仓库为一个管理bot的webui，后端实现接口列表即可实现bot管理
 
-###[接口列表]()
+### [接口列表](https://github.com/FloatTech/bot-manager/blob/main/docs/api.md)
 
 + ### 自行构建
 
