@@ -1,24 +1,17 @@
-# test3
+## 该仓库为一个管理bot的webui，后端实现接口列表即可实现bot管理
 
-## Project setup
-```
-yarn install
-```
+###[接口列表]()
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
++ ### 自行构建
 
-### Compiles and minifies for production
-```
-yarn build
-```
+  + 安装node.js环境
+  + 在文件目录执行n ``` npm install ```
+  + 运行 ``` npm server```即可进行调试模式
 
-### Lints and fixes files
-```
-yarn lint
-```
++ ### 项目依赖
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+    - vue3
+    - vue-router
+    - element-plus
+    - axios
+    - websocket

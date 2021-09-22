@@ -1,4 +1,4 @@
-package test3
+package botController
 
 import (
     "embed"

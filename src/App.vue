@@ -69,6 +69,7 @@ import Foot from "@/views/foot";
 import axios from "axios";
 import Api from "@/http/api";
 
+
   export default {
 
     components: {Foot},
@@ -98,6 +99,7 @@ import Api from "@/http/api";
       },
     created() {
         window.msgs = []
+      window.logs = []
       axios.get(Api.baseAPi+Api.GetLabel.index).then((resp)=>{
         this.label = resp.data
         if (resp.data === "ZeroBot-Plugin"){

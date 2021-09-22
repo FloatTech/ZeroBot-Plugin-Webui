@@ -21,7 +21,7 @@
       </el-col>
       <el-col :span="5">
         <div>
-          <el-select v-model="id" placeholder="请选择发送对象">
+          <el-select v-model="id" placeholder="请选择发送对象" filterable>
             <el-option v-for="item in list" :value="item.id" :key="item.name" :label="item.name">
               <span style="float: left">{{ item.nick_name }}</span>
               <span
@@ -74,11 +74,15 @@ export default {
       msg:''
     }
   },
+  beforeCreate() {
+
+  },
   created() {
-    Http.post(Api.baseAPi + Api.Config.index).then((resp) => {
+    Http.post(Api.baseAPi + Api.GetBots.index).then((resp) => {
       this.selfIdOptions.push(...resp.data)
       if (resp.data.length>0){
         this.selfId = resp.data[0]
+
         axios.post(Api.baseAPi+Api.GroupList.index,{self_id:this.selfId},{}).then((resp)=>{
           for (let data of resp.data) {
             console.log(data);
@@ -86,6 +90,7 @@ export default {
           }
           this.id = resp.data[0].group_id
         })
+        window.groups = this.list
       }
     }).catch((err)=>{
       console.log("请求api错误"+err)

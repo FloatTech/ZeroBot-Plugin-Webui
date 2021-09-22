@@ -2,7 +2,7 @@ export default {
     baseAPi : "http://127.0.0.1:3000",
     wsUrl: "ws://127.0.0.1:3000",
     // 获取qq数组
-    Config: {
+    GetBots: {
         index: '/get_bots'
     },
 
@@ -34,8 +34,16 @@ export default {
         index:"/send_msg"
     },
     // 改变插件状态
-    ChangePluginStatus:{
-
+    UpdatePluginStatus:{
+        index:"/update_plugin_status"
+    },
+    // 获取所有插件状态
+    GetPluginsStatus:{
+        index:"/get_plugins_status"
+    },
+    // 获取某个插件状态
+    GetPluginStatus:{
+        index:"/get_plugin_status"
     }
 
 }

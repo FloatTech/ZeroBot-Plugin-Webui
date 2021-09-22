@@ -1,3 +1,3 @@
-module github.com/huoxue1/test3
+module github.com/huoxue1/botController
 
 go 1.16
