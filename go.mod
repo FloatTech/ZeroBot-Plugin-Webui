@@ -1,3 +1,3 @@
-module github.com/huoxue1/bot-manager
+module github.com/FloatTech/bot-manager
 
 go 1.16
