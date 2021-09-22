@@ -1,4 +1,4 @@
-package bot-manager
+package bot_manager
 
 import (
     "embed"
