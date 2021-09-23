@@ -25,25 +25,7 @@ export default {
   },
   created() {
     this.logs = window.logs
-    let ws = new Websocket(Api.wsUrl+"/get_log");
-    this.ws = ws
-    ws.onOpen(function (event) {
-      console.log(event);
-      console.log("log连接已打开")
-    })
-    ws.onMessage((event)=>{
-      let msg = event.data.substr(event.data.indexOf("msg=")+5)
-      let results = event.data.split(" ", 2)
-      let level = results[1].split("=")[1]
-      let myDate = new Date();
-      this.logs.unshift({"time":myDate.toLocaleString(),"level":level,"msg":msg})
-    })
-    ws.onClose(()=>{
-      console.log("ws连接已关闭")
-    })
-    ws.onError((event)=>{
-      console.log("ws出现错误"+event)
-    })
+
   },
   methods:{
     filter_handle:function (value,row,column) {

@@ -6,7 +6,7 @@
     <el-table-column label="插件名" prop="name"> </el-table-column>
     <el-table-column label="群列表">
       <template #default="scope">
-        <el-select v-model="scope.row.group_id" @change="group_selected_changed()" filterable >
+        <el-select v-model="scope.row.group_id" @change="group_selected_changed(scope.row.name,scope.row.group_id)" filterable >
           <el-option  v-for="item in scope.row.groups" :value="item.group_id" :label="item.group_name" :key="item">
             <span style="float: left">{{ item.group_name }}</span>
             <span
@@ -17,7 +17,7 @@
         </el-select>
       </template>
     </el-table-column>
-    <el-table-column label="是否启用">
+    <el-table-column label="单群是否启用">
       <template #default="scope">
         <el-switch v-model="scope.row.enable" @change="plugin_status(scope.row.name,scope.row.enable,scope.row.group_id)" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
       </template>
@@ -73,8 +73,18 @@ export default {
 
   },
   methods:{
-    group_selected_changed:function () {
-
+    // 群选择发生改变
+    group_selected_changed:function (name,group_id) {
+        console.log(name,group_id)
+      // 获取单个插件状态
+      axios.post(Api.baseAPi+Api.GetPluginStatus.index,{"name":name,"group_id":group_id}).then((resp)=>{
+        console.log(resp.data)
+        for (let plugin of this.plugins) {
+          if (plugin.name === name){
+            plugin.enable = resp.data.enable
+          }
+        }
+      })
     },
     fresh_status:function (){
       axios.post(Api.baseAPi+Api.GetHandles.index).then((resp)=>{
