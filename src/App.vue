@@ -68,10 +68,9 @@
 import Foot from "@/views/foot";
 import axios from "axios";
 import Api from "@/http/api";
-import Websocket from "@/http/websocket1";
 
 
-  export default {
+export default {
 
     components: {Foot},
     data(){
@@ -117,24 +116,7 @@ import Websocket from "@/http/websocket1";
 
 
 
-      let ws = new Websocket(Api.wsUrl+"/get_log");
-      ws.onOpen(function (event) {
-        console.log(event);
-        console.log("log连接已打开")
-      })
-      ws.onMessage((event)=>{
-        let msg = event.data.substr(event.data.indexOf("msg=")+5)
-        let results = event.data.split(" ", 2)
-        let level = results[1].split("=")[1]
-        let myDate = new Date();
-        window.logs.unshift({"time":myDate.toLocaleString(),"level":level,"msg":msg})
-      })
-      ws.onClose(()=>{
-        console.log("ws连接已关闭")
-      })
-      ws.onError((event)=>{
-        console.log("ws出现错误"+event)
-      })
+
 
 
     }

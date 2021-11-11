@@ -11,6 +11,8 @@
 </template>
 
 <script>
+
+
 import Websocket from "@/http/websocket1";
 import Api from "@/http/api";
 
@@ -24,15 +26,41 @@ export default {
     }
   },
   created() {
-    this.logs = window.logs
+    if (window.logs !== undefined){
+      this.logs = window.logs
+    }
 
+    let ws = new Websocket(Api.wsUrl+"/get_log");
+    ws.onOpen(function (event) {
+      console.log(event);
+      console.log("log连接已打开")
+    })
+    ws.onMessage((event)=>{
+
+      let results = event.data.split(" ", -1)
+      console.log(results)
+      let level = results[0].replace("[","").replace("]","")
+      let myDate = new Date();
+      this.logs.unshift({"time":myDate.toLocaleString(),"level":level,"msg":event.data.replace(results[0],"")})
+    })
+    ws.onClose(()=>{
+      console.log("ws连接已关闭")
+    })
+    ws.onError((event)=>{
+      console.log("ws出现错误"+event)
+    })
+
+  },
+  beforeDestroy() {
+    window.logs = this.logs
   },
   methods:{
     filter_handle:function (value,row,column) {
       const property = column['property']
       return row[property] === value
     }
-  }
+  },
+
 }
 </script>
 
