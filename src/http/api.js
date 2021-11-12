@@ -44,6 +44,14 @@ export default {
     // 获取某个插件状态
     GetPluginStatus:{
         index:"/get_plugin_status"
+    },
+    // 获取请求列表
+    GetRequests:{
+        index:"/get_requests"
+    },
+    // 处理请求
+    HandleRequest:{
+        index: "/handle_request"
     }
 
 }

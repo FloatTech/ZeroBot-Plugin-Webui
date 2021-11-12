@@ -42,6 +42,9 @@ export default {
       let level = results[0].replace("[","").replace("]","")
       let myDate = new Date();
       this.logs.unshift({"time":myDate.toLocaleString(),"level":level,"msg":event.data.replace(results[0],"")})
+      if (this.logs >2000){
+        this.logs.shift()
+      }
     })
     ws.onClose(()=>{
       console.log("ws连接已关闭")
