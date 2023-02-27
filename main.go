@@ -1,11 +1,8 @@
-package bot_manager
+package webui
 
 import (
-    "embed"
+	"embed"
 )
 
 //go:embed dist
 var Dist embed.FS
-
-
-

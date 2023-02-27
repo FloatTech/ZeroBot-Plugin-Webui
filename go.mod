@@ -1,3 +1,3 @@
-module github.com/FloatTech/bot-manager
+module github.com/FloatTech/ZeroBot-Plugin-Webui
 
-go 1.16
+go 1.20
