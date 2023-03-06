@@ -12,6 +12,12 @@ const getRouteNames = (array: any[]) =>
     getRouteNames(item.children || []);
   });
 getRouteNames(basicRoutes);
+const head = document.getElementsByTagName('head');
+const meta = document.createElement('meta');
+meta.name = 'referrer';
+//根据实际情况修改referrer的值，可选值参考上文
+meta.content = 'no-referrer';
+head[0].appendChild(meta);
 
 // app router
 export const router = createRouter({
