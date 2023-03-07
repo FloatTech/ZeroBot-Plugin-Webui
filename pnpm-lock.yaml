@@ -10767,7 +10767,7 @@ packages:
     name: axios
     version: 0.21.4
     dependencies:
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.15.2_debug@4.3.4
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.15.2
     transitivePeerDependencies:
       - debug
     dev: true
@@ -10777,7 +10777,7 @@ packages:
     name: axios
     version: 0.27.2
     dependencies:
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.15.2_debug@4.3.4
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.15.2
       form-data: registry.npmmirror.com/form-data/4.0.0
     transitivePeerDependencies:
       - debug
@@ -11561,9 +11561,8 @@ packages:
     name: flatted
     version: 3.2.7
 
-  registry.npmmirror.com/follow-redirects/1.15.2_debug@4.3.4:
+  registry.npmmirror.com/follow-redirects/1.15.2:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.15.2.tgz}
-    id: registry.npmmirror.com/follow-redirects/1.15.2
     name: follow-redirects
     version: 1.15.2
     engines: {node: '>=4.0'}
@@ -11572,8 +11571,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dependencies:
-      debug: registry.npmmirror.com/debug/4.3.4
 
   registry.npmmirror.com/form-data/3.0.1:
     resolution: {integrity: sha512-RHkBKtLWUVwd7SqRIvCZMEvAMoGUp0XU+seQiZejj0COz3RI3hWP4sCv3gZWWLjJTd7rGwcsF5eKZGii0r/hbg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/form-data/-/form-data-3.0.1.tgz}

@@ -1,8 +1,8 @@
 <template>
   <div>
     <MessageSendBox />
-    <LogWebsocket />
     <MessageWebsocket />
+    <LogWebsocket />
   </div>
 </template>
 
