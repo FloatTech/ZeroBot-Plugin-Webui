@@ -204,7 +204,7 @@
     result.key = String(result.message_id);
     msgTableData.value.unshift(result);
     if (msgTableData.value.length > 1000) {
-      msgTableData.value.shift();
+      msgTableData.value.pop();
     }
   });
   ws.onClose(() => {
