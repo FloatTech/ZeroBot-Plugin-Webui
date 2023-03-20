@@ -5,4 +5,5 @@ export default {
   msg: 'message management',
   test: 'test',
   request: 'request management',
+  job: 'job management',
 };

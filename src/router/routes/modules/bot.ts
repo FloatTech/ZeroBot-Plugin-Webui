@@ -48,6 +48,14 @@ const dashboard: AppRouteModule = {
         hideMenu: true,
       },
     },
+    {
+      path: 'job',
+      name: 'Job',
+      component: () => import('/@/views/bot/job/index.vue'),
+      meta: {
+        title: t('routes.bot.job'),
+      },
+    },
   ],
 };
 
