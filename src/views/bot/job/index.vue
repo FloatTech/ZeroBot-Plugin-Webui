@@ -1,6 +1,7 @@
 <template>
   <div>
     <Divider>任务</Divider>
+    <AddJob />
     <Table :columns="columns" :data-source="jobTableData">
       <template #filterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }">
         <div style="padding: 8px">
@@ -29,54 +30,70 @@
       <template #filterIcon="filtered">
         <SearchOutlined :style="{ color: filtered ? '#108ee9' : undefined }" />
       </template>
-      <template #nickname="{ record }">
-        <span>{{ record.nickname + ' (' + record.user_id + ')' }} </span>
+      <template #jobType="{ text }">
+        <Tag color="green" v-if="text === 1">指令别名</Tag>
+        <Tag color="green" v-else-if="text === 2">定时任务</Tag>
+        <Tag color="green" v-else-if="text === 3">你问我答</Tag>
+        <Tag color="red" v-else>未知类型</Tag>
       </template>
-      <template #group_name="{ record }">
-        <span>{{ record.group_name + ' (' + record.group_id + ')' }} </span>
+      <template #fullMatchType="{ record }">
+        <span v-if="record.jobType !== 1">-</span>
+        <Tag color="green" v-else-if="record.fullMatchType === 1">无状态消息</Tag>
+        <Tag color="green" v-else-if="record.fullMatchType === 2">主人消息</Tag>
+        <Tag color="red" v-else>未知类型</Tag>
       </template>
-      <template #message_type="{ text }">
-        <span v-if="text === 'group'"><Tag color="green">群聊</Tag></span>
-        <span v-else><Tag color="red">私聊</Tag></span>
+      <template #questionType="{ record }">
+        <span v-if="record.jobType !== 3">-</span>
+        <Tag color="green" v-else-if="record.questionType === 1">单群员问</Tag>
+        <Tag color="green" v-else-if="record.questionType === 2">所有群员问</Tag>
+        <Tag color="red" v-else>未知类型</Tag>
       </template>
-      <template #raw_message="{ text }">
-        <li v-for="(item, index) in segment.fromCqcode(text)" :key="index">
-          <div v-if="item.type === 'text'">{{ item.text }}</div>
-          <div v-else-if="item.type === 'image'"> <Image :width="200" :src="item.url" /></div>
-          <div v-else-if="item.type === 'face'">
-            <Image :width="50" :src="'https://blog.imashimaro.com/emoji/qq/' + item.id + '@2x.gif'"
-          /></div>
-          <div v-else>
-            {{ item }}
-          </div>
-        </li>
+      <template #answerType="{ record }">
+        <span v-if="record.jobType !== 3">-</span>
+        <Tag color="green" v-else-if="record.answerType === 1">文本消息</Tag>
+        <Tag color="green" v-else-if="record.answerType === 2">注入消息</Tag>
+        <Tag color="red" v-else>未知类型</Tag>
+      </template>
+      <template #groupId="{ record }">
+        <span v-if="record.jobType === 1">-</span>
+        <span v-else>{{ record.groupId }}</span>
+      </template>
+      <template #userId="{ record }">
+        <span v-if="record.jobType === 1">-</span>
+        <span v-else>{{ record.userId }}</span>
+      </template>
+      <template #action="{ record }">
+        <span>
+          <Button danger :class="`${prefixCls}__action`" @click="deleteJob([record.id])"
+            >删除</Button
+          >
+        </span>
       </template>
     </Table>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { Table, Divider, Tag, Image, Input, Button } from 'ant-design-vue';
+  import { Table, Divider, Tag, Input, Button } from 'ant-design-vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
-  import { ref, reactive } from 'vue';
-  import { segment } from 'oicq/lib/message/elements';
+  import { computed, ref, reactive, watchEffect } from 'vue';
+  import { useUserStore } from '/@/store/modules/user';
+  import { jobDelete, jobList } from '/@/api/bot/job';
+  import { useDesign } from '/@/hooks/web/useDesign';
+  import AddJob from './components/AddJob.vue';
+  const { prefixCls } = useDesign('job');
   const searchInput = ref();
   const columns = [
     {
-      title: '时间',
-      dataIndex: 'time',
-      key: 'time',
-    },
-    {
-      title: '消息id',
-      dataIndex: 'message_id',
-      key: 'message_id',
+      title: 'id',
+      dataIndex: 'id',
+      key: 'id',
       slots: {
         filterDropdown: 'filterDropdown',
         filterIcon: 'filterIcon',
+        customRender: 'id',
       },
-      onFilter: (value, record) =>
-        record.message_id.toString().toLowerCase().includes(value.toLowerCase()),
+      onFilter: (value, record) => record.id.toString().toLowerCase().includes(value.toLowerCase()),
       onFilterDropdownVisibleChange: (visible) => {
         if (visible) {
           setTimeout(() => {
@@ -86,16 +103,16 @@
       },
     },
     {
-      title: '群名',
-      dataIndex: 'group_name',
-      key: 'group_name',
+      title: '匹配器',
+      dataIndex: 'matcher',
+      key: 'matcher',
       slots: {
         filterDropdown: 'filterDropdown',
         filterIcon: 'filterIcon',
-        customRender: 'group_name',
+        customRender: 'matcher',
       },
       onFilter: (value, record) =>
-        record.group_name.toString().toLowerCase().includes(value.toLowerCase()),
+        record.matcher.toString().toLowerCase().includes(value.toLowerCase()),
       onFilterDropdownVisibleChange: (visible) => {
         if (visible) {
           setTimeout(() => {
@@ -105,16 +122,16 @@
       },
     },
     {
-      title: '昵称',
-      dataIndex: 'nickname',
-      key: 'nickname',
+      title: '处理器',
+      dataIndex: 'handler',
+      key: 'handler',
       slots: {
         filterDropdown: 'filterDropdown',
         filterIcon: 'filterIcon',
-        customRender: 'nickname',
+        customRender: 'handler',
       },
       onFilter: (value, record) =>
-        record.nickname.toString().toLowerCase().includes(value.toLowerCase()),
+        record.handler.toString().toLowerCase().includes(value.toLowerCase()),
       onFilterDropdownVisibleChange: (visible) => {
         if (visible) {
           setTimeout(() => {
@@ -124,16 +141,16 @@
       },
     },
     {
-      title: '消息类型',
-      dataIndex: 'message_type',
-      key: 'message_type',
+      title: '任务类型',
+      dataIndex: 'jobType',
+      key: 'jobType',
       slots: {
         filterDropdown: 'filterDropdown',
         filterIcon: 'filterIcon',
-        customRender: 'message_type',
+        customRender: 'jobType',
       },
       onFilter: (value, record) =>
-        record.message_type.toString().toLowerCase().includes(value.toLowerCase()),
+        record.handler.toString().toLowerCase().includes(value.toLowerCase()),
       onFilterDropdownVisibleChange: (visible) => {
         if (visible) {
           setTimeout(() => {
@@ -143,16 +160,16 @@
       },
     },
     {
-      title: '消息内容',
-      dataIndex: 'raw_message',
-      key: 'raw_message',
+      title: '指令别名类型',
+      dataIndex: 'fullMatchType',
+      key: 'fullMatchType',
       slots: {
         filterDropdown: 'filterDropdown',
         filterIcon: 'filterIcon',
-        customRender: 'raw_message',
+        customRender: 'fullMatchType',
       },
       onFilter: (value, record) =>
-        record.raw_message.toString().toLowerCase().includes(value.toLowerCase()),
+        record.fullMatchType.toString().toLowerCase().includes(value.toLowerCase()),
       onFilterDropdownVisibleChange: (visible) => {
         if (visible) {
           setTimeout(() => {
@@ -160,18 +177,102 @@
           }, 100);
         }
       },
+    },
+    {
+      title: '问题类型',
+      dataIndex: 'questionType',
+      key: 'questionType',
+      slots: {
+        filterDropdown: 'filterDropdown',
+        filterIcon: 'filterIcon',
+        customRender: 'questionType',
+      },
+      onFilter: (value, record) =>
+        record.questionType.toString().toLowerCase().includes(value.toLowerCase()),
+      onFilterDropdownVisibleChange: (visible) => {
+        if (visible) {
+          setTimeout(() => {
+            searchInput.value.focus();
+          }, 100);
+        }
+      },
+    },
+    {
+      title: '回答类型',
+      dataIndex: 'answerType',
+      key: 'answerType',
+      slots: {
+        filterDropdown: 'filterDropdown',
+        filterIcon: 'filterIcon',
+        customRender: 'answerType',
+      },
+      onFilter: (value, record) =>
+        record.answerType.toString().toLowerCase().includes(value.toLowerCase()),
+      onFilterDropdownVisibleChange: (visible) => {
+        if (visible) {
+          setTimeout(() => {
+            searchInput.value.focus();
+          }, 100);
+        }
+      },
+    },
+    {
+      title: '群聊id',
+      dataIndex: 'groupId',
+      key: 'groupId',
+      slots: {
+        filterDropdown: 'filterDropdown',
+        filterIcon: 'filterIcon',
+        customRender: 'groupId',
+      },
+      onFilter: (value, record) =>
+        record.groupId.toString().toLowerCase().includes(value.toLowerCase()),
+      onFilterDropdownVisibleChange: (visible) => {
+        if (visible) {
+          setTimeout(() => {
+            searchInput.value.focus();
+          }, 100);
+        }
+      },
+    },
+    {
+      title: '用户id',
+      dataIndex: 'userId',
+      key: 'userId',
+      slots: {
+        filterDropdown: 'filterDropdown',
+        filterIcon: 'filterIcon',
+        customRender: 'userId',
+      },
+      onFilter: (value, record) =>
+        record.userId.toString().toLowerCase().includes(value.toLowerCase()),
+      onFilterDropdownVisibleChange: (visible) => {
+        if (visible) {
+          setTimeout(() => {
+            searchInput.value.focus();
+          }, 100);
+        }
+      },
+    },
+    {
+      title: '操作',
+      dataIndex: 'action',
+      key: 'action',
+      slots: { customRender: 'action' },
     },
   ];
   type JobTableData = {
-    key: string;
-    time: number;
-    message_type: string;
-    message_id: number;
-    group_id: number;
-    group_name: string;
-    user_id: number;
-    nickname: string;
-    raw_message: string;
+    key?: string;
+    id: number;
+    selfId: number;
+    answerType: number;
+    fullMatchType: number;
+    handler: string;
+    jobType: number;
+    matcher: string;
+    questionType: number;
+    groupId: number;
+    userId: number;
   };
   const jobTableData = ref<JobTableData[]>([]);
   const state = reactive({
@@ -188,6 +289,36 @@
     clearFilters();
     state.searchText = '';
   };
+  const userStore = useUserStore();
+  const qq = computed(() => userStore.getQQ);
+  const getJobTableData = async () => {
+    jobTableData.value = [];
+    let rsp = await jobList();
+    for (let j of rsp.jobList) {
+      if (j.selfId === qq.value) {
+        let o: JobTableData = j;
+        o.key = j.id.toString();
+        jobTableData.value.push(o);
+      }
+    }
+  };
+  const deleteJob = async (idList: number[]) => {
+    await jobDelete({
+      selfId: qq.value,
+      idList: idList,
+    });
+  };
+  watchEffect(() => {
+    getJobTableData();
+  });
 </script>
 
-<style></style>
+<style lang="less">
+  @prefix-cls: ~'@{namespace}-job';
+
+  .@{prefix-cls} {
+    &__action {
+      margin: 0 0 0 10px;
+    }
+  }
+</style>
