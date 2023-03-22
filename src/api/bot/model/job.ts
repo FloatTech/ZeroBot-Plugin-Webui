@@ -21,7 +21,7 @@ export interface Job {
   /**
    * 任务id
    */
-  id: number;
+  id?: number;
   /**
    * 任务类型,1-指令别名,2-定时任务,3-你问我答
    */
@@ -37,7 +37,7 @@ export interface Job {
   /**
    * 机器人id
    */
-  selfId: number;
+  selfId?: number;
   /**
    * 用户id, jobType=2,3使用的参数, 当jobType=3, QuestionType=2,userId=0
    */

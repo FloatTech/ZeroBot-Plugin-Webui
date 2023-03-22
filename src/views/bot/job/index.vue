@@ -76,11 +76,12 @@
 <script setup lang="ts">
   import { Table, Divider, Tag, Input, Button } from 'ant-design-vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
-  import { computed, ref, reactive, watchEffect } from 'vue';
+  import { ref, reactive, watchEffect } from 'vue';
   import { useUserStore } from '/@/store/modules/user';
   import { jobDelete, jobList } from '/@/api/bot/job';
   import { useDesign } from '/@/hooks/web/useDesign';
   import AddJob from './components/AddJob.vue';
+  import { storeToRefs } from 'pinia';
   const { prefixCls } = useDesign('job');
   const searchInput = ref();
   const columns = [
@@ -263,8 +264,8 @@
   ];
   type JobTableData = {
     key?: string;
-    id: number;
-    selfId: number;
+    id?: number;
+    selfId?: number;
     answerType: number;
     fullMatchType: number;
     handler: string;
@@ -290,19 +291,20 @@
     state.searchText = '';
   };
   const userStore = useUserStore();
-  const qq = computed(() => userStore.getQQ);
+  const { qq } = storeToRefs(userStore);
   const getJobTableData = async () => {
     jobTableData.value = [];
     let rsp = await jobList();
     for (let j of rsp.jobList) {
       if (j.selfId === qq.value) {
         let o: JobTableData = j;
-        o.key = j.id.toString();
+        o.key = j.id!.toString();
         jobTableData.value.push(o);
       }
     }
   };
   const deleteJob = async (idList: number[]) => {
+    console.log(qq.value);
     await jobDelete({
       selfId: qq.value,
       idList: idList,
