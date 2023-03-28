@@ -304,7 +304,6 @@
     }
   };
   const deleteJob = async (idList: number[]) => {
-    console.log(qq.value);
     await jobDelete({
       selfId: qq.value,
       idList: idList,

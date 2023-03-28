@@ -24,14 +24,15 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, watchEffect } from 'vue';
+  import { ref, watchEffect } from 'vue';
   import { FormItem, Select, SelectOptGroup, SelectOption } from 'ant-design-vue';
   import { GroupModel, FriendModel } from '/@/api/bot/model/gocq';
   import { getFriendList, getGroupList } from '/@/api/bot/bot';
   import { useUserStore } from '/@/store/modules/user';
+  import { storeToRefs } from 'pinia';
   const groupIdList = ref<number[]>([0]);
   const userStore = useUserStore();
-  const qq = computed(() => userStore.getQQ);
+  const { qq } = storeToRefs(userStore);
   const groupModelList = ref<GroupModel[]>([]);
   const friendModelList = ref<FriendModel[]>([]);
   const getGroupModel = async () => {

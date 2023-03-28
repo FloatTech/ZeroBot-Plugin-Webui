@@ -38,6 +38,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { segment } from 'oicq/lib/message/elements';
   import { genCqcode } from '/@/utils/cq/message';
+  import { storeToRefs } from 'pinia';
   const { prefixCls } = useDesign('messageSendBox');
   interface FormState {
     gidList: number[];
@@ -133,7 +134,7 @@
     formState.gidList = value;
   };
   const userStore = useUserStore();
-  const qq = computed(() => userStore.getQQ);
+  const { qq } = storeToRefs(userStore);
 
   const sendMessage = async () => {
     await sendMsg({
