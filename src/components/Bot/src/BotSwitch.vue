@@ -10,51 +10,43 @@
           :class="`${prefixCls}__avatar`"
         />
       </template>
-      <Avatar :src="curItem.pic" />
+      <Avatar :src="'http://q4.qlogo.cn/g?b=qq&nk=' + qq + '&s=640'" />
     </Popover>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue';
+  import { ref } from 'vue';
   import { Popover, Avatar, message } from 'ant-design-vue';
   import { getBotList } from '/@/api/bot/bot';
   import { useUserStore } from '/@/store/modules/user';
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { storeToRefs } from 'pinia';
   const { prefixCls } = useDesign('botSwitch');
   interface DataItem {
     id: number;
     pic: string;
   }
-  const curItem = ref<DataItem>({
-    id: 1,
-    pic: 'http://q4.qlogo.cn/g?b=qq&nk=' + 1 + '&s=640',
-  });
   const userStore = useUserStore();
+  const { qq } = storeToRefs(userStore);
   const data = ref<DataItem[]>([]);
-  const qq = computed(() => userStore.getQQ);
   const initList = async () => {
     data.value = [];
     let botList = await getBotList();
-    if (!qq.value && botList.length > 0) {
-      userStore.setQQ(botList[0]);
-    }
     for (let x of botList) {
       data.value.push({
         id: x,
         pic: 'http://q4.qlogo.cn/g?b=qq&nk=' + x + '&s=640',
       });
     }
-    curItem.value = {
-      id: qq.value,
-      pic: 'http://q4.qlogo.cn/g?b=qq&nk=' + qq.value + '&s=640',
-    };
+    if (qq.value === 0 && botList.length > 0) {
+      userStore.setQQ(botList[0]);
+    }
   };
+
   const selectId = (item: DataItem) => {
     userStore.setQQ(item.id);
-    message.info('切换到QQ: ' + item.id);
-    curItem.value = item;
-    console.log(curItem);
+    message.info('切换到QQ: ' + qq.value);
   };
   initList();
 </script>

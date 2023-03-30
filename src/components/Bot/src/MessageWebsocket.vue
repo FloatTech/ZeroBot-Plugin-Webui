@@ -204,7 +204,8 @@
     result.key = String(result.message_id);
     msgTableData.value.unshift(result);
     if (msgTableData.value.length > 1000) {
-      msgTableData.value.pop();
+      let halfIndex = Math.ceil(msgTableData.value.length / 2);
+      msgTableData.value.splice(halfIndex);
     }
   });
   ws.onClose(() => {

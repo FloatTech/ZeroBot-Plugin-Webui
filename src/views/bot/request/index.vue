@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
   import { Table, Button, Modal, Input, Tag } from 'ant-design-vue';
-  import { ref, watchEffect } from 'vue';
+  import { ref, watch } from 'vue';
   import { getRequestList, handleRequest } from '/@/api/bot/bot';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useUserStore } from '/@/store/modules/user';
@@ -120,7 +120,8 @@
     reason.value = '';
     visible.value = false;
   };
-  watchEffect(() => {
+  getRequestModel();
+  watch(qq, () => {
     getRequestModel();
   });
 </script>

@@ -76,7 +76,7 @@
 <script setup lang="ts">
   import { Table, Divider, Tag, Input, Button } from 'ant-design-vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
-  import { ref, reactive, watchEffect } from 'vue';
+  import { ref, reactive, watch } from 'vue';
   import { useUserStore } from '/@/store/modules/user';
   import { jobDelete, jobList } from '/@/api/bot/job';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -293,6 +293,7 @@
   const userStore = useUserStore();
   const { qq } = storeToRefs(userStore);
   const getJobTableData = async () => {
+    console.log('任务数据初始化');
     jobTableData.value = [];
     let rsp = await jobList();
     for (let j of rsp.jobList) {
@@ -309,7 +310,8 @@
       idList: idList,
     });
   };
-  watchEffect(() => {
+  getJobTableData();
+  watch(qq, () => {
     getJobTableData();
   });
 </script>
