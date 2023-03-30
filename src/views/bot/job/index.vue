@@ -264,7 +264,7 @@
   ];
   type JobTableData = {
     key?: string;
-    id?: number;
+    id?: string;
     selfId?: number;
     answerType: number;
     fullMatchType: number;
@@ -304,7 +304,7 @@
       }
     }
   };
-  const deleteJob = async (idList: number[]) => {
+  const deleteJob = async (idList: string[]) => {
     await jobDelete({
       selfId: qq.value,
       idList: idList,

@@ -21,7 +21,7 @@ export interface Job {
   /**
    * 任务id
    */
-  id?: number;
+  id?: string;
   /**
    * 任务类型,1-指令别名,2-定时任务,3-你问我答
    */
@@ -61,7 +61,7 @@ export interface DeleteReq {
   /**
    * 任务id
    */
-  idList: number[];
+  idList: string[];
   /**
    * 机器人qq
    */

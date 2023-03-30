@@ -30,7 +30,7 @@
   import { getFriendList, getGroupList } from '/@/api/bot/bot';
   import { useUserStore } from '/@/store/modules/user';
   import { storeToRefs } from 'pinia';
-  const groupIdList = ref<number[]>([0]);
+  const groupIdList = ref<number[]>([]);
   const userStore = useUserStore();
   const { qq } = storeToRefs(userStore);
   const groupModelList = ref<GroupModel[]>([]);

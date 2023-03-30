@@ -30,8 +30,9 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, reactive, UnwrapRef } from 'vue';
-  import { Form, FormItem, Button, Divider, Input, Select } from 'ant-design-vue';
+  import { computed, reactive, UnwrapRef, createVNode } from 'vue';
+  import { Form, FormItem, Button, Divider, Input, Select, Modal, message } from 'ant-design-vue';
+  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { sendMsg } from '/@/api/bot/bot';
   import { useUserStore } from '/@/store/modules/user';
   import { MessageSendSelect } from '/@/components/Bot';
@@ -135,13 +136,33 @@
   };
   const userStore = useUserStore();
   const { qq } = storeToRefs(userStore);
-
-  const sendMessage = async () => {
-    await sendMsg({
+  const showConfirm = () => {
+    Modal.confirm({
+      title: () => '确定要发送全部群聊?',
+      icon: () => createVNode(ExclamationCircleOutlined),
+      content: () => createVNode('div', { style: 'color:red;' }, '注意不要重复发送全部群聊'),
+      onOk() {
+        sendMsg({
+          selfId: qq.value,
+          gidList: formState.gidList,
+          message: formState.msg,
+        });
+        message.info('发送成功');
+      },
+      class: 'test',
+    });
+  };
+  const sendMessage = () => {
+    if (formState.gidList.includes(0)) {
+      showConfirm();
+      return;
+    }
+    sendMsg({
       selfId: qq.value,
       gidList: formState.gidList,
       message: formState.msg,
     });
+    message.info('发送成功');
   };
   const reset = () => {
     formState.msg = '';
