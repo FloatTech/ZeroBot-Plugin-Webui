@@ -9,11 +9,7 @@
     >
       <Form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
         <FormItem label="任务类型" name="任务类型">
-          <Select
-            v-model:value="formState.jobType"
-            placeholder="请选择你的任务类型"
-            @change="handleJobTypeChange"
-          >
+          <Select v-model:value="formState.jobType" placeholder="请选择你的任务类型">
             <SelectOption value="1">指令别名</SelectOption>
             <SelectOption value="2">定时任务</SelectOption>
             <SelectOption value="3">你问我答</SelectOption>
@@ -89,7 +85,6 @@
     Radio,
   } from 'ant-design-vue';
   import { jobAdd } from '/@/api/bot/job';
-  import { Job } from '/@/api/bot/model/job';
   import { useUserStore } from '/@/store/modules/user';
   import { storeToRefs } from 'pinia';
   const visible = ref<boolean>(false);
@@ -101,14 +96,25 @@
     visible.value = true;
   };
 
+  const emits = defineEmits(['refreshJob']);
   const handleOk = () => {
     confirmLoading.value = true;
-    let j: Job = formState;
-    console.log(qq.value);
-    j.selfId = qq.value;
-    jobAdd(j);
-    visible.value = false;
-    confirmLoading.value = false;
+    jobAdd({
+      answerType: parseInt(formState.answerType),
+      questionType: parseInt(formState.questionType),
+      groupId: formState.groupId,
+      userId: formState.userId,
+      jobType: parseInt(formState.jobType),
+      fullMatchType: parseInt(formState.fullMatchType),
+      handler: formState.handler,
+      matcher: formState.matcher,
+      selfId: qq.value,
+    });
+    setTimeout(() => {
+      visible.value = false;
+      confirmLoading.value = false;
+      emits('refreshJob');
+    }, 500);
   };
 
   interface FormState {
@@ -131,7 +137,7 @@
     /**
      * 任务类型,1-指令别名,2-定时任务,3-你问我答
      */
-    jobType: number;
+    jobType: number | string;
     /**
      * 当jobType=1时 为指令别名,当jobType=2时 为cron表达式,当jobType=3时 为正则表达式
      */
@@ -148,17 +154,13 @@
   const formState: UnwrapRef<FormState> = reactive({
     matcher: '',
     handler: '',
-    jobType: 0,
+    jobType: '',
     fullMatchType: 2,
     questionType: 2,
     answerType: 1,
     userId: 0,
     groupId: 0,
   });
-  const handleJobTypeChange = () => {
-    console.log(formState.jobType);
-    console.log(typeof formState.jobType);
-  };
   const labelCol = { span: 4 };
   const wrapperCol = { span: 14 };
 </script>

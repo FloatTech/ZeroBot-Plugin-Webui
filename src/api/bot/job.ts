@@ -12,7 +12,7 @@ export function jobList() {
 }
 
 export function jobAdd(params: Job) {
-  return defHttp.get({ url: JobApi.jobAdd, params });
+  return defHttp.post({ url: JobApi.jobAdd, params });
 }
 
 export function jobDelete(params: DeleteReq) {
