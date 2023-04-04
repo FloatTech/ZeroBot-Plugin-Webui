@@ -1,0 +1,54 @@
+<template>
+  <div>
+    <FormItem label="群成员">
+      <Select
+        v-model:value="userId"
+        style="width: 40%"
+        placeholder="请选择群成员"
+        @change="changeGroupUserId"
+      >
+        <SelectOption
+          v-for="item in groupMemberModelList"
+          :value="item.user_id"
+          :key="item.user_id"
+        >
+          {{ item.nickname + ' (' + item.user_id + ')' }}
+        </SelectOption>
+      </Select>
+    </FormItem>
+  </div>
+</template>
+
+<script setup lang="ts">
+  import { ref, watchEffect, toRefs } from 'vue';
+  import { FormItem, Select, SelectOption } from 'ant-design-vue';
+  import { GroupMemberModel } from '/@/api/bot/model/gocq';
+  import { getGroupMemberList } from '/@/api/bot/bot';
+  import { useUserStore } from '/@/store/modules/user';
+  import { storeToRefs } from 'pinia';
+  const props = defineProps({
+    groupId: Number,
+  });
+  //使用父组件传递过来的值
+  const { groupId } = toRefs(props);
+
+  const userId = ref<number>();
+  const userStore = useUserStore();
+  const { qq } = storeToRefs(userStore);
+  const groupMemberModelList = ref<GroupMemberModel[]>([]);
+  const getGroupMemberModel = async () => {
+    groupMemberModelList.value = await getGroupMemberList({
+      selfId: qq.value,
+      groupId: groupId?.value,
+    });
+  };
+  const emits = defineEmits(['changeGroupUserId']);
+  const changeGroupUserId = () => {
+    emits('changeGroupUserId', userId.value);
+  };
+  watchEffect(() => {
+    getGroupMemberModel();
+  });
+</script>
+
+<style></style>

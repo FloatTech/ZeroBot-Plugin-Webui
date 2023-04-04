@@ -2,11 +2,11 @@
   <div>
     <FormItem label="群聊 & 好友">
       <Select
-        v-model:value="groupIdList"
+        v-model:value="gidList"
         mode="multiple"
         style="width: 40%"
         placeholder="请选择群聊 & 好友"
-        @change="changeGroupIdList"
+        @change="changeGidList"
       >
         <SelectOptGroup label="群聊">
           <SelectOption v-for="item in groupModelList" :value="item.group_id" :key="item.group_id">
@@ -30,7 +30,7 @@
   import { getFriendList, getGroupList } from '/@/api/bot/bot';
   import { useUserStore } from '/@/store/modules/user';
   import { storeToRefs } from 'pinia';
-  const groupIdList = ref<number[]>([]);
+  const gidList = ref<number[]>([]);
   const userStore = useUserStore();
   const { qq } = storeToRefs(userStore);
   const groupModelList = ref<GroupModel[]>([]);
@@ -49,9 +49,9 @@
   const getFriendModel = async () => {
     friendModelList.value = await getFriendList({ selfId: qq.value });
   };
-  const emits = defineEmits(['changeGroupIdList']);
-  const changeGroupIdList = () => {
-    emits('changeGroupIdList', groupIdList.value);
+  const emits = defineEmits(['changeGidList']);
+  const changeGidList = () => {
+    emits('changeGidList', gidList.value);
   };
   watchEffect(() => {
     getGroupModel();

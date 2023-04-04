@@ -322,7 +322,6 @@
   const userStore = useUserStore();
   const { qq } = storeToRefs(userStore);
   const getJobTableData = async () => {
-    console.log('任务数据初始化');
     jobTableData.value = [];
     let rsp = await jobList();
     for (let j of rsp.jobList) {

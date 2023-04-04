@@ -97,13 +97,13 @@
   };
 
   const emits = defineEmits(['refreshJob']);
-  const handleOk = () => {
+  const handleOk = async () => {
     confirmLoading.value = true;
-    jobAdd({
+    await jobAdd({
       answerType: parseInt(formState.answerType),
       questionType: parseInt(formState.questionType),
-      groupId: formState.groupId,
-      userId: formState.userId,
+      groupId: parseInt(formState.groupId),
+      userId: parseInt(formState.userId),
       jobType: parseInt(formState.jobType),
       fullMatchType: parseInt(formState.fullMatchType),
       handler: formState.handler,
@@ -114,7 +114,7 @@
       visible.value = false;
       confirmLoading.value = false;
       emits('refreshJob');
-    }, 500);
+    }, 1000);
   };
 
   interface FormState {

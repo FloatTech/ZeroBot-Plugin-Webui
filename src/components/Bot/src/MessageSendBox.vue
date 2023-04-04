@@ -2,7 +2,7 @@
   <div :class="`${prefixCls}__sendbox`">
     <Divider>发送消息</Divider>
     <Form layout="horizontal" v-bind="formItemLayout" :model="formState">
-      <MessageSendSelect @change-group-id-list="groupIdListChange" />
+      <GroupAndFriendSelect @change-gid-list="groupIdListChange" />
       <FormItem label="示例CQ码">
         <Select
           v-model:value="formState.cqInput"
@@ -35,7 +35,7 @@
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { sendMsg } from '/@/api/bot/bot';
   import { useUserStore } from '/@/store/modules/user';
-  import { MessageSendSelect } from '/@/components/Bot';
+  import { GroupAndFriendSelect } from '/@/components/Bot';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { segment } from 'oicq/lib/message/elements';
   import { genCqcode } from '/@/utils/cq/message';
@@ -140,7 +140,7 @@
     Modal.confirm({
       title: () => '确定要发送全部群聊?',
       icon: () => createVNode(ExclamationCircleOutlined),
-      content: () => createVNode('div', { style: 'color:red;' }, '注意不要重复发送全部群聊'),
+      content: () => createVNode('div', { style: 'color:red;' }, '重复信息, 请勿多次发送全部群聊'),
       onOk() {
         sendMsg({
           selfId: qq.value,

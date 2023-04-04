@@ -17,6 +17,25 @@ export interface GroupModel {
   member_count: number;
 }
 
+export interface GroupMemberModel {
+  age: number;
+  area: string;
+  card: string;
+  card_changeable: boolean;
+  group_id: number;
+  join_time: number;
+  last_sent_time: number;
+  level: string;
+  nickname: string;
+  role: string;
+  sex: string;
+  shut_up_timestamp: number;
+  title: string;
+  title_expire_time: number;
+  unfriendly: boolean;
+  user_id: number;
+}
+
 export interface FriendModel {
   nickname: string;
   remark: string;
