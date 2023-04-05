@@ -3,9 +3,9 @@
     <FormItem label="群聊">
       <Select
         v-model:value="groupId"
-        style="width: 40%"
         placeholder="请选择群聊"
         @change="changeGroupId"
+        :class="`${prefixCls}__groupSelect`"
       >
         <SelectOption v-for="item in groupModelList" :value="item.group_id" :key="item.group_id">
           {{ item.group_name + ' (' + item.group_id + ')' }}
@@ -22,12 +22,22 @@
   import { getGroupList } from '/@/api/bot/bot';
   import { useUserStore } from '/@/store/modules/user';
   import { storeToRefs } from 'pinia';
+  import { useDesign } from '/@/hooks/web/useDesign';
+  const { prefixCls } = useDesign('groupSelect');
   const groupId = ref<number>();
   const userStore = useUserStore();
   const { qq } = storeToRefs(userStore);
   const groupModelList = ref<GroupModel[]>([]);
   const getGroupModel = async () => {
     groupModelList.value = await getGroupList({ selfId: qq.value });
+    groupModelList.value.unshift({
+      group_id: 0,
+      group_name: '私聊',
+      group_create_time: 0,
+      group_level: 0,
+      max_member_count: 0,
+      member_count: 0,
+    });
   };
   const emits = defineEmits(['changeGroupId']);
   const changeGroupId = () => {
@@ -38,4 +48,11 @@
   });
 </script>
 
-<style></style>
+<style lang="less">
+  @prefix-cls: ~'@{namespace}-groupSelect';
+  .@{prefix-cls} {
+    &__select {
+      width: 80%;
+    }
+  }
+</style>

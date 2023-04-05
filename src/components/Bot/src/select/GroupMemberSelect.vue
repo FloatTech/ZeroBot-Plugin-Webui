@@ -3,9 +3,9 @@
     <FormItem label="群成员">
       <Select
         v-model:value="userId"
-        style="width: 40%"
         placeholder="请选择群成员"
         @change="changeGroupUserId"
+        :class="`${prefixCls}__groupMemberSelect`"
       >
         <SelectOption
           v-for="item in groupMemberModelList"
@@ -26,6 +26,8 @@
   import { getGroupMemberList } from '/@/api/bot/bot';
   import { useUserStore } from '/@/store/modules/user';
   import { storeToRefs } from 'pinia';
+  import { useDesign } from '/@/hooks/web/useDesign';
+  const { prefixCls } = useDesign('groupMemberSelect');
   const props = defineProps({
     groupId: Number,
   });
@@ -51,4 +53,11 @@
   });
 </script>
 
-<style></style>
+<style lang="less">
+  @prefix-cls: ~'@{namespace}-groupMemberSelect';
+  .@{prefix-cls} {
+    &__select {
+      width: 80%;
+    }
+  }
+</style>

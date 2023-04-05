@@ -3,9 +3,9 @@
     <FormItem label="好友">
       <Select
         v-model:value="userId"
-        style="width: 40%"
         placeholder="请选择好友"
         @change="changeUserId"
+        :class="`${prefixCls}__friendSelect`"
       >
         <SelectOption v-for="item in friendModelList" :value="item.user_id" :key="item.user_id">
           {{ item.nickname + ' (' + item.user_id + ')' }}
@@ -22,6 +22,8 @@
   import { getFriendList } from '/@/api/bot/bot';
   import { useUserStore } from '/@/store/modules/user';
   import { storeToRefs } from 'pinia';
+  import { useDesign } from '/@/hooks/web/useDesign';
+  const { prefixCls } = useDesign('friendSelect');
   const userId = ref<number>();
   const userStore = useUserStore();
   const { qq } = storeToRefs(userStore);
@@ -38,4 +40,11 @@
   });
 </script>
 
-<style></style>
+<style lang="less">
+  @prefix-cls: ~'@{namespace}-friendSelect';
+  .@{prefix-cls} {
+    &__select {
+      width: 80%;
+    }
+  }
+</style>

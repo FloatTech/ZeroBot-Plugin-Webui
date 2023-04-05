@@ -53,20 +53,25 @@
             <Radio value="2">注入消息</Radio>
           </RadioGroup>
         </FormItem>
-        <FormItem
-          label="群聊id"
-          name="群聊id"
+        <GroupSelect
           v-show="formState.jobType.toString() === '2' || formState.jobType.toString() === '3'"
-        >
-          <Input v-model:value="formState.groupId" />
-        </FormItem>
-        <FormItem
-          label="用户id"
-          name="用户id"
-          v-show="formState.jobType.toString() === '2' || formState.jobType.toString() === '3'"
-        >
-          <Input v-model:value="formState.userId" />
-        </FormItem>
+          @change-group-id="changeGroupId"
+        />
+        <GroupMemberSelect
+          v-show="
+            (formState.jobType.toString() === '2' || formState.jobType.toString() === '3') &&
+            formState.groupId.toString() !== '0'
+          "
+          @change-group-user-id="changeGroupUserId"
+          :group-id="formState.groupId"
+        />
+        <FriendSelect
+          v-show="
+            (formState.jobType.toString() === '2' || formState.jobType.toString() === '3') &&
+            formState.groupId.toString() === '0'
+          "
+          @change-user-id="changeUserId"
+        />
       </Form>
     </Modal>
   </div>
@@ -87,6 +92,7 @@
   import { jobAdd } from '/@/api/bot/job';
   import { useUserStore } from '/@/store/modules/user';
   import { storeToRefs } from 'pinia';
+  import { GroupSelect, GroupMemberSelect, FriendSelect } from '/@/components/Bot';
   const visible = ref<boolean>(false);
   const confirmLoading = ref<boolean>(false);
   const userStore = useUserStore();
@@ -115,6 +121,15 @@
       confirmLoading.value = false;
       emits('refreshJob');
     }, 1000);
+  };
+  const changeGroupId = (value: number) => {
+    formState.groupId = value;
+  };
+  const changeGroupUserId = (value: number) => {
+    formState.userId = value;
+  };
+  const changeUserId = (value: number) => {
+    formState.userId = value;
   };
 
   interface FormState {
