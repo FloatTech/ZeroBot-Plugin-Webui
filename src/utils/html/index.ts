@@ -44,3 +44,13 @@ export function mergeSpace(str) {
   str = str.replace(/(\s|&nbsp;)+/g, ' ');
   return str;
 }
+
+// 检验字符串正则表达式合法性
+export function isRegex(str) {
+  try {
+    new RegExp(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

@@ -1,10 +1,12 @@
 <template>
   <div>
-    <FormItem label="群聊">
+    <FormItem label="群聊" name="groupId">
       <Select
         v-model:value="groupId"
+        show-search
         placeholder="请选择群聊"
         @change="changeGroupId"
+        @filterOption="filterOption"
         :class="`${prefixCls}__groupSelect`"
       >
         <SelectOption v-for="item in groupModelList" :value="item.group_id" :key="item.group_id">
@@ -30,18 +32,23 @@
   const groupModelList = ref<GroupModel[]>([]);
   const getGroupModel = async () => {
     groupModelList.value = await getGroupList({ selfId: qq.value });
-    groupModelList.value.unshift({
-      group_id: 0,
-      group_name: '私聊',
-      group_create_time: 0,
-      group_level: 0,
-      max_member_count: 0,
-      member_count: 0,
-    });
+    if (groupModelList.value !== null) {
+      groupModelList.value.unshift({
+        group_id: 0,
+        group_name: '私聊',
+        group_create_time: 0,
+        group_level: 0,
+        max_member_count: 0,
+        member_count: 0,
+      });
+    }
   };
   const emits = defineEmits(['changeGroupId']);
   const changeGroupId = () => {
     emits('changeGroupId', groupId.value);
+  };
+  const filterOption = (input: string, option: any) => {
+    return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
   watchEffect(() => {
     getGroupModel();

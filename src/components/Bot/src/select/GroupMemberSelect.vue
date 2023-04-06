@@ -1,10 +1,12 @@
 <template>
   <div>
-    <FormItem label="群成员">
+    <FormItem label="群成员" name="userId">
       <Select
         v-model:value="userId"
+        show-search
         placeholder="请选择群成员"
         @change="changeGroupUserId"
+        @filterOption="filterOption"
         :class="`${prefixCls}__groupMemberSelect`"
       >
         <SelectOption
@@ -43,10 +45,33 @@
       selfId: qq.value,
       groupId: groupId?.value,
     });
+    if (groupMemberModelList.value !== null) {
+      groupMemberModelList.value.unshift({
+        age: 0,
+        area: '',
+        card: '',
+        card_changeable: false,
+        group_id: 0,
+        join_time: 0,
+        last_sent_time: 0,
+        level: '',
+        nickname: '所有群员',
+        role: '',
+        sex: '',
+        shut_up_timestamp: 0,
+        title: '',
+        title_expire_time: 0,
+        unfriendly: false,
+        user_id: 0,
+      });
+    }
   };
   const emits = defineEmits(['changeGroupUserId']);
   const changeGroupUserId = () => {
     emits('changeGroupUserId', userId.value);
+  };
+  const filterOption = (input: string, option: any) => {
+    return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
   watchEffect(() => {
     getGroupMemberModel();

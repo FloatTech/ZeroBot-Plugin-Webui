@@ -1,10 +1,12 @@
 <template>
   <div>
-    <FormItem label="好友">
+    <FormItem label="好友" name="userId">
       <Select
         v-model:value="userId"
+        show-search
         placeholder="请选择好友"
         @change="changeUserId"
+        @filterOption="filterOption"
         :class="`${prefixCls}__friendSelect`"
       >
         <SelectOption v-for="item in friendModelList" :value="item.user_id" :key="item.user_id">
@@ -34,6 +36,9 @@
   const emits = defineEmits(['changeUserId']);
   const changeUserId = () => {
     emits('changeUserId', userId.value);
+  };
+  const filterOption = (input: string, option: any) => {
+    return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
   watchEffect(() => {
     getGroupModel();
