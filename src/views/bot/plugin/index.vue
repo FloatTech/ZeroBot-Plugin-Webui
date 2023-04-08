@@ -133,6 +133,7 @@
   import { PluginModel, GroupModel, FriendModel } from '/@/api/bot/model/gocq';
   import { useUserStore } from '/@/store/modules/user';
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { storeToRefs } from 'pinia';
   const { prefixCls } = useDesign('plugin');
   console.log('prefixCls', prefixCls);
   interface FormState {
@@ -214,7 +215,7 @@
   const getPluginModel = async (group_id) => {
     pluginModelList.value = await getAllPlugin({ groupId: group_id });
   };
-  const qq = computed(() => userStore.getQQ);
+  const { qq } = storeToRefs(userStore);
   const getGroupModel = async () => {
     groupModelList.value = await getGroupList({ selfId: qq.value });
     groupModelList.value.unshift({

@@ -35,10 +35,11 @@
 
 <script setup lang="ts">
   import { Table, Button, Modal, Input, Tag } from 'ant-design-vue';
-  import { ref, watchEffect, computed } from 'vue';
+  import { ref, watch } from 'vue';
   import { getRequestList, handleRequest } from '/@/api/bot/bot';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useUserStore } from '/@/store/modules/user';
+  import { storeToRefs } from 'pinia';
   const userStore = useUserStore();
   const { prefixCls } = useDesign('request');
   const columns = [
@@ -83,7 +84,7 @@
     comment: string;
     flag: string;
   };
-  const qq = computed(() => userStore.getQQ);
+  const { qq } = storeToRefs(userStore);
   const requestTableData = ref<RequestTableData[]>([]);
   const getRequestModel = async () => {
     requestTableData.value = [];
@@ -119,7 +120,8 @@
     reason.value = '';
     visible.value = false;
   };
-  watchEffect(() => {
+  getRequestModel();
+  watch(qq, () => {
     getRequestModel();
   });
 </script>

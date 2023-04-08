@@ -43,7 +43,8 @@
       msg: escape2Html(removeHtmlTab(msg)),
     });
     if (logTableData.value.length > 1000) {
-      logTableData.value.pop();
+      let halfIndex = Math.ceil(logTableData.value.length / 2);
+      logTableData.value.splice(halfIndex);
     }
   });
 

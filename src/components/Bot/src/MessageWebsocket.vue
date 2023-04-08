@@ -1,7 +1,7 @@
 <template>
   <div>
     <Divider>消息</Divider>
-    <Table :columns="columns" :data-source="msgTableData">
+    <Table :columns="columns" :data-source="msgTableData" @change="handleChange">
       <template #filterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }">
         <div style="padding: 8px">
           <Input
@@ -26,14 +26,39 @@
           </Button>
         </div>
       </template>
+      <template #customRender="{ text, column }">
+        <span v-if="state.searchText && state.searchedColumn === column.dataIndex">
+          <template
+            v-for="(fragment, i) in text
+              .toString()
+              .split(new RegExp(`(?<=${state.searchText})|(?=${state.searchText})`, 'i'))"
+          >
+            <mark
+              v-if="fragment.toLowerCase() === state.searchText.toLowerCase()"
+              class="highlight"
+              :key="i"
+            >
+              {{ fragment }}
+            </mark>
+            <template v-else>{{ fragment }}</template>
+          </template>
+        </span>
+        <template v-else>
+          {{ text }}
+        </template>
+      </template>
       <template #filterIcon="filtered">
         <SearchOutlined :style="{ color: filtered ? '#108ee9' : undefined }" />
       </template>
       <template #nickname="{ record }">
-        <span>{{ record.nickname + ' (' + record.user_id + ')' }} </span>
+        <Avatar :src="'http://q4.qlogo.cn/g?b=qq&nk=' + record.user_id + '&s=640'" />
+        <span>{{ record.nickname }} </span>
       </template>
       <template #group_name="{ record }">
-        <span>{{ record.group_name + ' (' + record.group_id + ')' }} </span>
+        <Avatar
+          :src="'https://p.qlogo.cn/gh/' + record.group_id + '/' + record.group_id + '/640/'"
+        />
+        <span>{{ record.group_name }} </span>
       </template>
       <template #message_type="{ text }">
         <span v-if="text === 'group'"><Tag color="green">群聊</Tag></span>
@@ -57,114 +82,133 @@
 
 <script setup lang="ts">
   import Websocket from '/@/utils/socket/websocket';
-  import { onUnmounted } from 'vue';
-  import { Table, Divider, Tag, Image, Input, Button } from 'ant-design-vue';
+  import { onUnmounted, computed } from 'vue';
+  import { Table, Divider, Tag, Image, Input, Button, Avatar } from 'ant-design-vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import { Api, wsUrl } from '/@/api/bot/bot';
   import { ref, reactive } from 'vue';
   import { segment } from 'oicq/lib/message/elements';
+  import { TableState, TableStateFilters } from 'ant-design-vue/es/table/interface';
+  type Pagination = TableState['pagination'];
   const searchInput = ref();
-  const columns = [
-    {
-      title: '时间',
-      dataIndex: 'time',
-      key: 'time',
-    },
-    {
-      title: '消息id',
-      dataIndex: 'message_id',
-      key: 'message_id',
-      slots: {
-        filterDropdown: 'filterDropdown',
-        filterIcon: 'filterIcon',
+  const sortedInfo = ref();
+  const filteredInfo = ref();
+  const columns = computed(() => {
+    const sorted = sortedInfo.value || {};
+    return [
+      {
+        title: '时间',
+        dataIndex: 'time',
+        key: 'time',
+        slots: {
+          filterDropdown: 'filterDropdown',
+          filterIcon: 'filterIcon',
+          customRender: 'customRender',
+        },
+        onFilter: (value, record) =>
+          record.time.toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: (visible) => {
+          if (visible) {
+            setTimeout(() => {
+              searchInput.value.focus();
+            }, 100);
+          }
+        },
       },
-      onFilter: (value, record) =>
-        record.message_id.toString().toLowerCase().includes(value.toLowerCase()),
-      onFilterDropdownVisibleChange: (visible) => {
-        if (visible) {
-          setTimeout(() => {
-            searchInput.value.focus();
-          }, 100);
-        }
+      {
+        title: '消息id',
+        dataIndex: 'message_id',
+        key: 'message_id',
+        slots: {
+          filterDropdown: 'filterDropdown',
+          filterIcon: 'filterIcon',
+          customRender: 'customRender',
+        },
+        onFilter: (value, record) =>
+          record.message_id.toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: (visible) => {
+          if (visible) {
+            setTimeout(() => {
+              searchInput.value.focus();
+            }, 100);
+          }
+        },
       },
-    },
-    {
-      title: '群名',
-      dataIndex: 'group_name',
-      key: 'group_name',
-      slots: {
-        filterDropdown: 'filterDropdown',
-        filterIcon: 'filterIcon',
-        customRender: 'group_name',
+      {
+        title: '群名',
+        dataIndex: 'group_name',
+        key: 'group_name',
+        slots: {
+          filterDropdown: 'filterDropdown',
+          filterIcon: 'filterIcon',
+          customRender: 'group_name',
+        },
+        onFilter: (value, record) =>
+          record.group_name.toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: (visible) => {
+          if (visible) {
+            setTimeout(() => {
+              searchInput.value.focus();
+            }, 100);
+          }
+        },
       },
-      onFilter: (value, record) =>
-        record.group_name.toString().toLowerCase().includes(value.toLowerCase()),
-      onFilterDropdownVisibleChange: (visible) => {
-        if (visible) {
-          setTimeout(() => {
-            searchInput.value.focus();
-          }, 100);
-        }
+      {
+        title: '昵称',
+        dataIndex: 'nickname',
+        key: 'nickname',
+        slots: {
+          filterDropdown: 'filterDropdown',
+          filterIcon: 'filterIcon',
+          customRender: 'nickname',
+        },
+        onFilter: (value, record) =>
+          record.nickname.toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: (visible) => {
+          if (visible) {
+            setTimeout(() => {
+              searchInput.value.focus();
+            }, 100);
+          }
+        },
       },
-    },
-    {
-      title: '昵称',
-      dataIndex: 'nickname',
-      key: 'nickname',
-      slots: {
-        filterDropdown: 'filterDropdown',
-        filterIcon: 'filterIcon',
-        customRender: 'nickname',
+      {
+        title: '消息类型',
+        dataIndex: 'message_type',
+        key: 'message_type',
+        slots: {
+          customRender: 'message_type',
+        },
+        filters: [
+          { text: '群聊', value: 'group' },
+          { text: '私聊', value: 'private' },
+        ],
+        onFilter: (value: string, record: MsgTableData) => record.message_type.toString() === value,
+        sorter: (a: MsgTableData, b: MsgTableData) => a.message_type.length - b.message_type.length,
+        sortOrder: sorted.columnKey === 'message_type' && sorted.order,
+        ellipsis: true,
       },
-      onFilter: (value, record) =>
-        record.nickname.toString().toLowerCase().includes(value.toLowerCase()),
-      onFilterDropdownVisibleChange: (visible) => {
-        if (visible) {
-          setTimeout(() => {
-            searchInput.value.focus();
-          }, 100);
-        }
+      {
+        title: '消息内容',
+        dataIndex: 'raw_message',
+        key: 'raw_message',
+        slots: {
+          filterDropdown: 'filterDropdown',
+          filterIcon: 'filterIcon',
+          customRender: 'raw_message',
+        },
+        onFilter: (value, record) =>
+          record.raw_message.toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: (visible) => {
+          if (visible) {
+            setTimeout(() => {
+              searchInput.value.focus();
+            }, 100);
+          }
+        },
       },
-    },
-    {
-      title: '消息类型',
-      dataIndex: 'message_type',
-      key: 'message_type',
-      slots: {
-        filterDropdown: 'filterDropdown',
-        filterIcon: 'filterIcon',
-        customRender: 'message_type',
-      },
-      onFilter: (value, record) =>
-        record.message_type.toString().toLowerCase().includes(value.toLowerCase()),
-      onFilterDropdownVisibleChange: (visible) => {
-        if (visible) {
-          setTimeout(() => {
-            searchInput.value.focus();
-          }, 100);
-        }
-      },
-    },
-    {
-      title: '消息内容',
-      dataIndex: 'raw_message',
-      key: 'raw_message',
-      slots: {
-        filterDropdown: 'filterDropdown',
-        filterIcon: 'filterIcon',
-        customRender: 'raw_message',
-      },
-      onFilter: (value, record) =>
-        record.raw_message.toString().toLowerCase().includes(value.toLowerCase()),
-      onFilterDropdownVisibleChange: (visible) => {
-        if (visible) {
-          setTimeout(() => {
-            searchInput.value.focus();
-          }, 100);
-        }
-      },
-    },
-  ];
+    ];
+  });
   type MsgTableData = {
     key: string;
     time: number;
@@ -186,6 +230,11 @@
     state.searchText = selectedKeys[0];
     state.searchedColumn = dataIndex;
   };
+  const handleChange = (pagination: Pagination, filters: TableStateFilters, sorter: any) => {
+    console.log('Various parameters', pagination, filters, sorter);
+    filteredInfo.value = filters;
+    sortedInfo.value = sorter;
+  };
 
   const handleReset = (clearFilters) => {
     clearFilters();
@@ -204,7 +253,8 @@
     result.key = String(result.message_id);
     msgTableData.value.unshift(result);
     if (msgTableData.value.length > 1000) {
-      msgTableData.value.pop();
+      let halfIndex = Math.ceil(msgTableData.value.length / 2);
+      msgTableData.value.splice(halfIndex);
     }
   });
   ws.onClose(() => {

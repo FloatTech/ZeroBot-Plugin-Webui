@@ -1,10 +1,11 @@
 import { defHttp } from '/@/utils/http/axios';
-import { PluginModel, GroupModel, FriendModel, RequestModel } from './model/gocq';
+import { PluginModel, GroupModel, FriendModel, RequestModel, GroupMemberModel } from './model/gocq';
 
 export enum Api {
   getBotList = '/getBotList',
   getFriendList = '/getFriendList',
   getGroupList = '/getGroupList',
+  getGroupMemberList = '/getGroupMemberList',
   getPlugin = '/manage/getPlugin',
   getAllPlugin = '/manage/getAllPlugin',
   updatePluginStatus = '/manage/updatePluginStatus',
@@ -23,6 +24,10 @@ export const wsUrl =
 
 export function getBotList() {
   return defHttp.get<number[]>({ url: Api.getBotList });
+}
+
+export function getGroupMemberList(params: { selfId: number; groupId?: number }) {
+  return defHttp.get<GroupMemberModel[]>({ url: Api.getGroupMemberList, params });
 }
 
 export function getGroupList(params: { selfId: number }) {

@@ -2,7 +2,7 @@
   <div :class="`${prefixCls}__sendbox`">
     <Divider>发送消息</Divider>
     <Form layout="horizontal" v-bind="formItemLayout" :model="formState">
-      <MessageSendSelect @change-group-id-list="groupIdListChange" />
+      <GroupAndFriendSelect @change-gid-list="groupIdListChange" />
       <FormItem label="示例CQ码">
         <Select
           v-model:value="formState.cqInput"
@@ -30,14 +30,16 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, reactive, UnwrapRef } from 'vue';
-  import { Form, FormItem, Button, Divider, Input, Select } from 'ant-design-vue';
+  import { computed, reactive, UnwrapRef, createVNode } from 'vue';
+  import { Form, FormItem, Button, Divider, Input, Select, Modal, message } from 'ant-design-vue';
+  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { sendMsg } from '/@/api/bot/bot';
   import { useUserStore } from '/@/store/modules/user';
-  import { MessageSendSelect } from '/@/components/Bot';
+  import { GroupAndFriendSelect } from '/@/components/Bot';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { segment } from 'oicq/lib/message/elements';
   import { genCqcode } from '/@/utils/cq/message';
+  import { storeToRefs } from 'pinia';
   const { prefixCls } = useDesign('messageSendBox');
   interface FormState {
     gidList: number[];
@@ -133,14 +135,34 @@
     formState.gidList = value;
   };
   const userStore = useUserStore();
-  const qq = computed(() => userStore.getQQ);
-
-  const sendMessage = async () => {
-    await sendMsg({
+  const { qq } = storeToRefs(userStore);
+  const showConfirm = () => {
+    Modal.confirm({
+      title: () => '确定要发送全部群聊?',
+      icon: () => createVNode(ExclamationCircleOutlined),
+      content: () => createVNode('div', { style: 'color:red;' }, '重复信息, 请勿多次发送全部群聊'),
+      onOk() {
+        sendMsg({
+          selfId: qq.value,
+          gidList: formState.gidList,
+          message: formState.msg,
+        });
+        message.info('发送成功');
+      },
+      class: 'test',
+    });
+  };
+  const sendMessage = () => {
+    if (formState.gidList.includes(0)) {
+      showConfirm();
+      return;
+    }
+    sendMsg({
       selfId: qq.value,
       gidList: formState.gidList,
       message: formState.msg,
     });
+    message.info('发送成功');
   };
   const reset = () => {
     formState.msg = '';
