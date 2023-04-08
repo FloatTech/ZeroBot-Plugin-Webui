@@ -1,6 +1,6 @@
 <template>
   <div>
-    <FormItem label="群成员" name="userId">
+    <FormItem has-feedback label="群成员" name="userId">
       <Select
         v-model:value="userId"
         show-search
