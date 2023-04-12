@@ -324,7 +324,7 @@
   const getJobTableData = async () => {
     jobTableData.value = [];
     let rsp = await jobList();
-    for (let j of rsp.jobList) {
+    for (let j of rsp) {
       if (j.selfId === qq.value) {
         let o: JobTableData = j;
         o.key = j.id!.toString();

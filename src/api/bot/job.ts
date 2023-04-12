@@ -1,5 +1,5 @@
 import { defHttp } from '/@/utils/http/axios';
-import { JobListRsp, Job, DeleteReq } from './model/job';
+import { Job, DeleteReq } from './model/job';
 
 export enum JobApi {
   jobList = '/job/list',
@@ -8,7 +8,7 @@ export enum JobApi {
 }
 
 export function jobList() {
-  return defHttp.get<JobListRsp>({ url: JobApi.jobList });
+  return defHttp.get<Job[]>({ url: JobApi.jobList });
 }
 
 export function jobAdd(params: Job) {
