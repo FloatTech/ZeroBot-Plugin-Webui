@@ -45,16 +45,6 @@ export interface Job {
 }
 
 /**
- * job.JobListRsp，任务列表的出参
- */
-export interface JobListRsp {
-  /**
-   * 任务列表
-   */
-  jobList: Job[];
-}
-
-/**
  * job.DeleteReq，删除任务的入参
  */
 export interface DeleteReq {
