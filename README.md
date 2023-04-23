@@ -1,6 +1,6 @@
 <div align="center"> <a href="https://github.com/FloatTech/ZeroBot-Plugin"> <img alt="ZeroBot-Plugin Logo" width="200" height="200" src="https://cdn.jsdelivr.net/gh/FloatTech/ZeroBot-Plugin@master/.github/hua_nobg_512.gif"> </a> <br> <br>
 
-[![license](https://img.shields.io/github/license/anncwb/vue-vben-admin.svg)](LICENSE)
+[![license](https://img.shields.io/github/license/FloatTech/ZeroBot-Plugin-Webui.svg)](LICENSE)
 
 <h1>ZeroBot-Plugin-Webui</h1>
 </div>
@@ -22,3 +22,7 @@ pnpm run build
 ## 部署
 
 已经将打包好的静态文件, 嵌入到 go 后端一起部署
+
+## 抓壮丁
+
+快来人写 webui, 小白也没关系, 手把手教学
